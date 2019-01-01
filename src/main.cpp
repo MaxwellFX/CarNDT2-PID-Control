@@ -6,6 +6,8 @@
 #include <fstream>
 #include <exception>
 
+#define WRITE_TO_FILE 1
+
 // for convenience
 using json = nlohmann::json;
 
@@ -38,20 +40,21 @@ int main()
     uWS::Hub h;
 
     std::ofstream file;
+#if WRITE_TO_FILE
     file.open("../Full_Params.csv");
     file << "CTE, steer_value" << std::endl;
-
+#endif
     PID pid_steer, pid_throttle;
 
     // TODO: Initialize the pid variable.
-	// pid_steer.Init(0.1744, 0.0, 0.0);
+	pid_steer.Init(0.1744, 0.0, 0.0);
     // pid_steer.Init(0.1744, 0.00042837, 0);
-    // pid_steer.Init(0.1744, 0.0, 2.5);
-    pid_steer.Init(0.1744, 0.00038837, 2.5);
+    // pid_steer.Init(0.1744, 0.0, 2.525);
+    // pid_steer.Init(0.1744, 0.00033837, 2.525);
 	pid_throttle.Init(0.376731, 0.0, 0.0206185);
 
-    bool bTwiddle = true;
-    pid_steer.SetTuningParams(2200, 610.0, 0.05);
+    bool bTwiddle = false;
+    pid_steer.SetTuningParams(2020, 650.0, 0.05);
 
     h.onMessage([&pid_steer, &pid_throttle, &bTwiddle, &file](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -108,13 +111,13 @@ int main()
 					
                     // DEBUG
                     // std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
-
+#if WRITE_TO_FILE
                     file << cte << "," << steer_value << std::endl;
-
+#endif
                     json msgJson;
                     msgJson["steering_angle"] = steer_value;
-                    msgJson["throttle"] = throttle_value;
-                    // msgJson["throttle"] = 0.3;
+                    // msgJson["throttle"] = throttle_value;
+                    msgJson["throttle"] = 0.3;
                     auto msg = "42[\"steer\"," + msgJson.dump() + "]";
                     // std::cout << msg << std::endl;
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
@@ -164,5 +167,7 @@ int main()
         return -1;
     }
     h.run();
+#if WRITE_TO_FILE
     file.close();
+#endif
 }

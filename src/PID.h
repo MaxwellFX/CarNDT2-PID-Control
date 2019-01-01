@@ -11,8 +11,9 @@ private:
     double prevCTE;
 
     // Counters for twiddling
-    long counter;   
-	
+    long counter;
+    int evaluationCount;  
+
     // Coefficient gains
     double tau_p;
     double tau_i;
@@ -22,11 +23,12 @@ private:
     unsigned int gainParamIndex;
     double tuningScale;
     double acceptingTotalCTE;
-    double evaluationCount;
     double dp[2];
     int consecutiveUnderPerformIndexArray[2];
     bool doneAdding;
     bool doneSubstracting;
+
+    bool paramsUpdateFlag[2];
 
     int GetConsecutiveFailingParamIndex();
     void TurnGainParam(int index, double delta);
