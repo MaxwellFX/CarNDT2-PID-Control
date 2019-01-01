@@ -3,6 +3,7 @@
 #include "json.hpp"
 #include "PID.h"
 #include <math.h>
+#include <fstream>
 #include <exception>
 
 // for convenience
@@ -36,16 +37,23 @@ int main()
 {
     uWS::Hub h;
 
-    PID pid_steer, pid_throttle;
-    // TODO: Initialize the pid variable.
+    std::ofstream file;
+    file.open("../Full_Params.csv");
+    file << "CTE, steer_value" << std::endl;
 
-	pid_steer.Init(0.1744, 0.00042837, 2.225);
+    PID pid_steer, pid_throttle;
+
+    // TODO: Initialize the pid variable.
+	// pid_steer.Init(0.1744, 0.0, 0.0);
+    // pid_steer.Init(0.1744, 0.00042837, 0);
+    // pid_steer.Init(0.1744, 0.0, 2.5);
+    pid_steer.Init(0.1744, 0.00038837, 2.5);
 	pid_throttle.Init(0.376731, 0.0, 0.0206185);
 
-    bool bTwiddle = false;
-    pid_steer.SetTuningParams(2000, 610.0, 0.05);
+    bool bTwiddle = true;
+    pid_steer.SetTuningParams(2200, 610.0, 0.05);
 
-    h.onMessage([&pid_steer, &pid_throttle, &bTwiddle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+    h.onMessage([&pid_steer, &pid_throttle, &bTwiddle, &file](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
         // The 4 signifies a websocket message
         // The 2 signifies a websocket event
@@ -101,9 +109,12 @@ int main()
                     // DEBUG
                     // std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
+                    file << cte << "," << steer_value << std::endl;
+
                     json msgJson;
                     msgJson["steering_angle"] = steer_value;
                     msgJson["throttle"] = throttle_value;
+                    // msgJson["throttle"] = 0.3;
                     auto msg = "42[\"steer\"," + msgJson.dump() + "]";
                     // std::cout << msg << std::endl;
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
@@ -153,4 +164,5 @@ int main()
         return -1;
     }
     h.run();
+    file.close();
 }

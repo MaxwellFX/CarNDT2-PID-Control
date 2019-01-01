@@ -24,14 +24,12 @@ private:
     double acceptingTotalCTE;
     double evaluationCount;
     double dp[2];
-    double gain_param[2];
-    int paramCntFailCount[2];
+    int consecutiveUnderPerformIndexArray[2];
     bool doneAdding;
     bool doneSubstracting;
 
-    bool IsConsecutiveFail();
-    int getConsecutiveFailParamIndex();
-    char operationType(int index);
+    int GetConsecutiveFailingParamIndex();
+    void TurnGainParam(int index, double delta);
 public:
 
     double totalCTE;
