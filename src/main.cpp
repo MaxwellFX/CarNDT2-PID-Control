@@ -6,7 +6,7 @@
 #include <fstream>
 #include <exception>
 
-#define WRITE_TO_FILE 1
+#define WRITE_TO_FILE 0
 
 // for convenience
 using json = nlohmann::json;
@@ -47,10 +47,10 @@ int main()
     PID pid_steer, pid_throttle;
 
     // TODO: Initialize the pid variable.
-	pid_steer.Init(0.1744, 0.0, 0.0);
+	// pid_steer.Init(0.1744, 0.0, 0.0);
     // pid_steer.Init(0.1744, 0.00042837, 0);
     // pid_steer.Init(0.1744, 0.0, 2.525);
-    // pid_steer.Init(0.1744, 0.00033837, 2.525);
+    pid_steer.Init(0.1744, 0.00033837, 2.525);
 	pid_throttle.Init(0.376731, 0.0, 0.0206185);
 
     bool bTwiddle = false;
@@ -111,13 +111,13 @@ int main()
 					
                     // DEBUG
                     // std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
-#if WRITE_TO_FILE
+                    #if WRITE_TO_FILE
                     file << cte << "," << steer_value << std::endl;
-#endif
+                    #endif
                     json msgJson;
                     msgJson["steering_angle"] = steer_value;
-                    // msgJson["throttle"] = throttle_value;
-                    msgJson["throttle"] = 0.3;
+                    msgJson["throttle"] = throttle_value;
+                    // msgJson["throttle"] = 0.3;
                     auto msg = "42[\"steer\"," + msgJson.dump() + "]";
                     // std::cout << msg << std::endl;
                     ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);

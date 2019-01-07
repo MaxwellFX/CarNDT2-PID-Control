@@ -41,7 +41,27 @@ Finally, with all three components, a PID controller is made.
 
 ### **Visual demonstration:**
 
-The following graphs and videos demonstrations the effect of each component. 
+**Note that for the purpose of comparison, throttle input value has been kept as constant for the following plot.** Here is a visual comparison on how each components contributes to the vehicle control:
+
+<p align="center"><a href="https://www.youtube.com/watch?v=wy60VDzF2-8"> Video demo for removing I, D components </a><p align="center">
+<p align="center"><a href="https://www.youtube.com/watch?v=FHBf_rd32X0"> Video demo for removing I component </a><p align="center">
+<p align="center"><a href="https://www.youtube.com/watch?v=-5a1QE-rMoA"> Video demo for removing D component </a><p align="center">
+
+<p align="center"><img src = "./pythonGraph/CTE.PNG" alt = "CTE comparison for differen controllers" width = "400px" class ="center"><p align="center">
+
+As we can see from the graph, without the compensation from the differential component, the run failed disastrously. Both P and PI controller eventually wonders off from the track. Here is another graph showing the corresponding steering value:
+
+<p align="center"><img src = "./pythonGraph/Steering angle.PNG" alt = "CTE comparison for differen controllers" width = "400px" class ="center"><p align="center">
+
+As expected, the steering value indicates for PD and PID controller, the vehicle was moving relatively along the desired trajectory with few instances of anomaly. 
+
+Between PD and PID controller, we can observe that the integral components reduces the CTE slightly comparing to PD only.
+
+### **Hyperparameters:**
+
+In addition to controlling the steering angle to PID controller, I have also added another controller for the throttling value. This additional throttling controller makes the automated twiddling very time consuming since the car slows down or moving back and forth when it detects large increases of CTE. 
+
+Thus, I mannually tuned the hyperparameters through rough guess until the vehicle can somewhat follows the track. Then I start the fine tuning processing via the twiddling function introduced from the class lecture. Each evaluation process is mearsured over 2150 steps, which is roughly how long it takes to complete one track. After 10 laps or so, I ended up with the parameter (P:0.1744, I:0.00033837, D:2.525)
 
 
-
+<a href="https://www.youtube.com/watch?v=0nKvZvAKHvk">Here is the video demo with the final parameter</a>
